@@ -1,0 +1,6 @@
+torch>=2.0
+rdkit
+numpy>=1.24,<2
+pandas>=1.5
+chemprop>=2.2
+scikit-learn
