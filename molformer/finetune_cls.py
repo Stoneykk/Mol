@@ -4,15 +4,6 @@ Path B: HuggingFace AutoModel + AdamW.
 Supports multi-task binary classification with NaN-masked BCE loss.
 """
 
-# --- Compatibility shim: IBM MoLFormer's remote code imports transformers.onnx,
-# which was removed in newer transformers versions. We create a dummy module so
-# the import succeeds (OnnxConfig is never actually used in our pipeline). ---
-import sys, types
-if "transformers.onnx" not in sys.modules:
-    _onnx = types.ModuleType("transformers.onnx")
-    _onnx.OnnxConfig = type("OnnxConfig", (), {})
-    sys.modules["transformers.onnx"] = _onnx
-
 import argparse
 import json
 import os
