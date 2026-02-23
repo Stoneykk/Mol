@@ -141,7 +141,9 @@ IBM 的 MoLFormer 远程代码（`configuration_molformer.py`, `modeling_molform
 
 ### 6.2 DeepChem Scaffold Split
 
-使用 `deepchem.splits.ScaffoldSplitter` 生成 80/10/10 的 train/val/test 划分，与 ChemBERTa-3 官方使用完全相同的分割算法。脚本 `scripts/generate_deepchem_splits.py` 从现有数据中提取 SMILES + targets，重新按 DeepChem scaffold 算法分割。
+使用 `deepchem.splits.ScaffoldSplitter`（deepchem 2.8.1）预先生成 80/10/10 的 train/val/test 划分，与 ChemBERTa-3 官方使用完全相同的分割算法。Split 文件已预生成并存放在 `data/*_dc_split.csv`，无需运行时安装 deepchem。
+
+生成脚本：`scripts/generate_deepchem_splits.py`
 
 ### 6.3 Docker 部署
 
@@ -151,8 +153,8 @@ FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
 ```
 
 运行流程：
-1. Docker 启动时自动生成 DeepChem scaffold split 文件
-2. 依次运行 6 个数据集的 benchmark
+1. DeepChem split 文件已预生成在 `data/` 目录中
+2. Docker 启动后依次运行 6 个数据集的 benchmark
 3. 结果通过 volume 映射保存到宿主机
 
 ---
@@ -168,8 +170,11 @@ Mol_Regression/
 ├── scripts/
 │   └── generate_deepchem_splits.py # 生成 DeepChem scaffold split
 ├── data/
-│   ├── *_dc_split.csv             # DeepChem scaffold split 文件（运行时生成）
-│   └── *_v2_split.csv             # 旧的 chemprop v2 split 文件
+│   ├── deepchem_split/            # DeepChem scaffold split 文件（预生成）
+│   │   └── *_dc_split.csv
+│   ├── chemprop_split/            # chemprop v2 scaffold split 文件
+│   │   └── *_v2_split.csv
+│   └── *.csv                      # 原始数据集
 ├── run_molformer_benchmark.sh     # 一键跑分脚本
 ├── Dockerfile                     # GPU 服务器 Docker 镜像
 ├── requirements.txt               # Python 依赖

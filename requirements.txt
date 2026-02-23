@@ -5,4 +5,3 @@ pandas>=1.5
 chemprop>=2.2
 scikit-learn
 transformers==4.38.2
-deepchem>=2.5

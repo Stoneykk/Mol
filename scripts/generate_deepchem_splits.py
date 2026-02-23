@@ -23,6 +23,7 @@ except ImportError:
     sys.exit(1)
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+DC_SPLIT_DIR = os.path.join(DATA_DIR, "deepchem_split")
 
 DATASETS = {
     "esol": {
@@ -70,7 +71,8 @@ DATASETS = {
 
 def generate_split(name: str, cfg: dict):
     src_path = os.path.join(DATA_DIR, cfg["src"])
-    out_path = os.path.join(DATA_DIR, cfg["out"])
+    os.makedirs(DC_SPLIT_DIR, exist_ok=True)
+    out_path = os.path.join(DC_SPLIT_DIR, cfg["out"])
 
     df = pd.read_csv(src_path)
     cols = [cfg["smiles_col"]] + cfg["target_cols"]
