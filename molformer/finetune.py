@@ -1,9 +1,8 @@
 """Finetune MoLFormer-c3-1.1B on regression tasks (ESOL, FreeSolv, Lipophilicity).
 
-Path B: HuggingFace AutoModel + AdamW (not ChemBERTa-3's DeepChem + FusedLAMB).
+Uses HuggingFace AutoModel + AdamW with DeepChem scaffold splits (80/10/10).
 Differences from ChemBERTa-3 official:
   - Optimizer: AdamW instead of FusedLAMB (apex)
-  - Data split: chemprop v2 scaffold split (consistent with Stage 1 D-MPNN)
   - Framework: pure PyTorch instead of DeepChem wrapper
 """
 

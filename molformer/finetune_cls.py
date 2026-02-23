@@ -1,6 +1,6 @@
 """Finetune MoLFormer-c3-1.1B on classification tasks (BBBP, Tox21, ClinTox).
 
-Path B: HuggingFace AutoModel + AdamW.
+Uses HuggingFace AutoModel + AdamW with DeepChem scaffold splits (80/10/10).
 Supports multi-task binary classification with NaN-masked BCE loss.
 """
 

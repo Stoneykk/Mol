@@ -2,15 +2,13 @@
 # ==============================================================================
 # MoLFormer-c3-1.1B Benchmark — 6 MoleculeNet datasets × 3 seeds
 #
+# Uses DeepChem scaffold splits (80/10/10) to match ChemBERTa-3 official setup.
+#
 # Usage:
 #   chmod +x run_molformer_benchmark.sh
 #   ./run_molformer_benchmark.sh
 #
-# Prerequisites (GPU server):
-#   conda activate chemprop
-#   pip install torch transformers scikit-learn pandas numpy
-#
-# Expected GPU time: ~2-3 hours total (depending on GPU)
+# Expected GPU time: ~2-3 hours total
 #   - Regression (3 datasets × 100 epochs × 3 seeds)
 #   - Classification (3 datasets × 10 epochs × 3 seeds)
 # ==============================================================================
@@ -23,7 +21,7 @@ BATCH_SIZE=32
 OUTPUT_BASE="output/molformer_benchmark"
 
 echo "=============================================="
-echo " MoLFormer-c3-1.1B Benchmark"
+echo " MoLFormer-c3-1.1B Benchmark (DeepChem split)"
 echo " Runs per dataset: ${N_RUNS}"
 echo " Base seed: ${SEED}"
 echo " Output: ${OUTPUT_BASE}/"
@@ -35,12 +33,25 @@ python -c "import torch; g=torch.cuda.is_available(); print(f'CUDA available: {g
 echo ""
 
 # ==============================================================================
+# Step 0: Generate DeepChem scaffold splits (if not already present)
+# ==============================================================================
+
+if [ ! -f data/esol_dc_split.csv ]; then
+    echo ">>> Generating DeepChem scaffold splits..."
+    python scripts/generate_deepchem_splits.py
+    echo ""
+else
+    echo ">>> DeepChem split files already exist, skipping generation."
+    echo ""
+fi
+
+# ==============================================================================
 # Regression tasks (100 epochs, metric: RMSE)
 # ==============================================================================
 
 echo ">>> [1/6] ESOL (regression)"
 python molformer/finetune.py \
-    --split-file data/esol_v2_split.csv \
+    --split-file data/esol_dc_split.csv \
     --target-col logSolubility \
     --output-dir "${OUTPUT_BASE}/esol" \
     --epochs 100 \
@@ -51,7 +62,7 @@ python molformer/finetune.py \
 echo ""
 echo ">>> [2/6] FreeSolv (regression)"
 python molformer/finetune.py \
-    --split-file data/freesolv_v2_split.csv \
+    --split-file data/freesolv_dc_split.csv \
     --target-col freesolv \
     --output-dir "${OUTPUT_BASE}/freesolv" \
     --epochs 100 \
@@ -62,7 +73,7 @@ python molformer/finetune.py \
 echo ""
 echo ">>> [3/6] Lipophilicity (regression)"
 python molformer/finetune.py \
-    --split-file data/lipophilicity_v2_split.csv \
+    --split-file data/lipophilicity_dc_split.csv \
     --target-col logD \
     --output-dir "${OUTPUT_BASE}/lipophilicity" \
     --epochs 100 \
@@ -77,7 +88,7 @@ python molformer/finetune.py \
 echo ""
 echo ">>> [4/6] BBBP (classification, 1 task)"
 python molformer/finetune_cls.py \
-    --split-file data/bbbp_v2_split.csv \
+    --split-file data/bbbp_dc_split.csv \
     --target-cols bbbp \
     --output-dir "${OUTPUT_BASE}/bbbp" \
     --epochs 10 \
@@ -88,7 +99,7 @@ python molformer/finetune_cls.py \
 echo ""
 echo ">>> [5/6] Tox21 (classification, 12 tasks)"
 python molformer/finetune_cls.py \
-    --split-file data/tox21_v2_split.csv \
+    --split-file data/tox21_dc_split.csv \
     --target-cols NR-AR NR-AR-LBD NR-AhR NR-Aromatase NR-ER NR-ER-LBD \
                   NR-PPAR-gamma SR-ARE SR-ATAD5 SR-HSE SR-MMP SR-p53 \
     --output-dir "${OUTPUT_BASE}/tox21" \
@@ -100,7 +111,7 @@ python molformer/finetune_cls.py \
 echo ""
 echo ">>> [6/6] ClinTox (classification, 2 tasks)"
 python molformer/finetune_cls.py \
-    --split-file data/clintox_v2_split.csv \
+    --split-file data/clintox_dc_split.csv \
     --target-cols FDA_APPROVED CT_TOX \
     --output-dir "${OUTPUT_BASE}/clintox" \
     --epochs 10 \

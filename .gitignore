@@ -16,3 +16,4 @@ output/
 *.log
 
 .DS_Store
+.cursor/
