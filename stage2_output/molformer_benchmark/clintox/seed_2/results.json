@@ -1,0 +1,15 @@
+{
+  "seed": 2,
+  "test_auc_mean": 0.9887828867340911,
+  "test_auc_per_task": {
+    "FDA_APPROVED": 0.9848121502797763,
+    "CT_TOX": 0.9927536231884058
+  },
+  "best_val_auc": 0.9960525564735934,
+  "elapsed_seconds": 42.21435046195984,
+  "train_size": 1184,
+  "val_size": 148,
+  "test_size": 148,
+  "n_tasks": 2,
+  "n_params": 45557762
+}

@@ -1,0 +1,45 @@
+{
+  "dataset": "clintox_dc_split.csv",
+  "target_cols": [
+    "FDA_APPROVED",
+    "CT_TOX"
+  ],
+  "n_runs": 3,
+  "test_auc_mean": 0.9886496599821593,
+  "test_auc_std": 0.0013193592444452255,
+  "test_auc_per_run": [
+    0.9869712925311924,
+    0.9901948006811941,
+    0.9887828867340911
+  ],
+  "val_auc_per_run": [
+    0.9934393595616251,
+    0.9930130427957818,
+    0.9960525564735934
+  ],
+  "per_task_summary": {
+    "FDA_APPROVED": {
+      "mean": 0.9845456967759126,
+      "std": 0.0003768221589057595
+    },
+    "CT_TOX": {
+      "mean": 0.9927536231884058,
+      "std": 0.002958320945390325
+    }
+  },
+  "args": {
+    "split_file": "data/deepchem_split/clintox_dc_split.csv",
+    "smiles_col": "smiles",
+    "target_cols": [
+      "FDA_APPROVED",
+      "CT_TOX"
+    ],
+    "output_dir": "output/molformer_benchmark/clintox",
+    "batch_size": 32,
+    "epochs": 10,
+    "lr": 3e-05,
+    "weight_decay": 0.01,
+    "n_runs": 3,
+    "seed": 0
+  }
+}

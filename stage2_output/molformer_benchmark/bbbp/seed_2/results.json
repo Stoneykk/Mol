@@ -1,0 +1,14 @@
+{
+  "seed": 2,
+  "test_auc_mean": 0.7182291164852106,
+  "test_auc_per_task": {
+    "bbbp": 0.7182291164852106
+  },
+  "best_val_auc": 0.9981560559006211,
+  "elapsed_seconds": 57.57686758041382,
+  "train_size": 1631,
+  "val_size": 204,
+  "test_size": 204,
+  "n_tasks": 1,
+  "n_params": 45556993
+}

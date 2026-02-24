@@ -1,0 +1,105 @@
+{
+  "dataset": "tox21_dc_split.csv",
+  "target_cols": [
+    "NR-AR",
+    "NR-AR-LBD",
+    "NR-AhR",
+    "NR-Aromatase",
+    "NR-ER",
+    "NR-ER-LBD",
+    "NR-PPAR-gamma",
+    "SR-ARE",
+    "SR-ATAD5",
+    "SR-HSE",
+    "SR-MMP",
+    "SR-p53"
+  ],
+  "n_runs": 3,
+  "test_auc_mean": 0.746509386111123,
+  "test_auc_std": 0.0037768186723435527,
+  "test_auc_per_run": [
+    0.7436923588265661,
+    0.7439879116002143,
+    0.7518478879065885
+  ],
+  "val_auc_per_run": [
+    0.7782584768250187,
+    0.790872728597004,
+    0.7823627828899534
+  ],
+  "per_task_summary": {
+    "NR-AR": {
+      "mean": 0.7494437266724088,
+      "std": 0.031118346231323014
+    },
+    "NR-AR-LBD": {
+      "mean": 0.8028128171668841,
+      "std": 0.024992708151599347
+    },
+    "NR-AhR": {
+      "mean": 0.795111057134375,
+      "std": 0.007052980254767318
+    },
+    "NR-Aromatase": {
+      "mean": 0.7264884677275165,
+      "std": 0.02596056196526281
+    },
+    "NR-ER": {
+      "mean": 0.724340810704447,
+      "std": 0.006567869314835491
+    },
+    "NR-ER-LBD": {
+      "mean": 0.7184548925055253,
+      "std": 0.014199629385566332
+    },
+    "NR-PPAR-gamma": {
+      "mean": 0.6818729793413337,
+      "std": 0.05270828168241401
+    },
+    "SR-ARE": {
+      "mean": 0.7087827426810477,
+      "std": 0.007228676197193618
+    },
+    "SR-ATAD5": {
+      "mean": 0.7321414457564691,
+      "std": 0.004782763318004092
+    },
+    "SR-HSE": {
+      "mean": 0.7721850726106045,
+      "std": 0.003321608720855792
+    },
+    "SR-MMP": {
+      "mean": 0.8131469470649896,
+      "std": 0.0065506768017537355
+    },
+    "SR-p53": {
+      "mean": 0.7333316739678747,
+      "std": 0.015442604503997941
+    }
+  },
+  "args": {
+    "split_file": "data/deepchem_split/tox21_dc_split.csv",
+    "smiles_col": "smiles",
+    "target_cols": [
+      "NR-AR",
+      "NR-AR-LBD",
+      "NR-AhR",
+      "NR-Aromatase",
+      "NR-ER",
+      "NR-ER-LBD",
+      "NR-PPAR-gamma",
+      "SR-ARE",
+      "SR-ATAD5",
+      "SR-HSE",
+      "SR-MMP",
+      "SR-p53"
+    ],
+    "output_dir": "output/molformer_benchmark/tox21",
+    "batch_size": 32,
+    "epochs": 10,
+    "lr": 3e-05,
+    "weight_decay": 0.01,
+    "n_runs": 3,
+    "seed": 0
+  }
+}

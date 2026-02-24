@@ -1,0 +1,39 @@
+{
+  "dataset": "bbbp_dc_split.csv",
+  "target_cols": [
+    "bbbp"
+  ],
+  "n_runs": 3,
+  "test_auc_mean": 0.7268683559752063,
+  "test_auc_std": 0.006493854875117065,
+  "test_auc_per_run": [
+    0.7284902206378264,
+    0.7338857308025821,
+    0.7182291164852106
+  ],
+  "val_auc_per_run": [
+    0.9974767080745341,
+    0.999417701863354,
+    0.9981560559006211
+  ],
+  "per_task_summary": {
+    "bbbp": {
+      "mean": 0.7268683559752063,
+      "std": 0.006493854875117065
+    }
+  },
+  "args": {
+    "split_file": "data/deepchem_split/bbbp_dc_split.csv",
+    "smiles_col": "smiles",
+    "target_cols": [
+      "bbbp"
+    ],
+    "output_dir": "output/molformer_benchmark/bbbp",
+    "batch_size": 32,
+    "epochs": 10,
+    "lr": 3e-05,
+    "weight_decay": 0.01,
+    "n_runs": 3,
+    "seed": 0
+  }
+}

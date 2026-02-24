@@ -1,0 +1,30 @@
+{
+  "dataset": "freesolv_dc_split.csv",
+  "target_col": "freesolv",
+  "n_runs": 3,
+  "test_rmse_mean": 2.1751200358072915,
+  "test_rmse_std": 0.026343582686048975,
+  "test_rmse_per_run": [
+    2.146871328353882,
+    2.1682090759277344,
+    2.210279703140259
+  ],
+  "val_rmse_per_run": [
+    2.7145652770996094,
+    2.2112576961517334,
+    2.3991196155548096
+  ],
+  "args": {
+    "split_file": "data/deepchem_split/freesolv_dc_split.csv",
+    "smiles_col": "smiles",
+    "target_col": "freesolv",
+    "output_dir": "output/molformer_benchmark/freesolv",
+    "batch_size": 32,
+    "epochs": 100,
+    "lr": 3e-05,
+    "weight_decay": 0.01,
+    "patience": 0,
+    "n_runs": 3,
+    "seed": 0
+  }
+}

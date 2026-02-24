@@ -1,0 +1,10 @@
+{
+  "seed": 1,
+  "test_rmse": 2.1682090759277344,
+  "best_val_rmse": 2.2112576961517334,
+  "elapsed_seconds": 190.06704878807068,
+  "train_size": 513,
+  "val_size": 64,
+  "test_size": 65,
+  "n_params": 45556993
+}
