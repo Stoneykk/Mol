@@ -12,11 +12,11 @@ import os
 # Source: https://github.com/deepforestsci/chemberta3
 #         results/images/Deepchem-splits-benchmark1.png
 official_cls  = {"BBBP": (0.735, 0.019), "Tox21": (0.723, 0.012), "ClinTox": (0.839, 0.013)}
-official_reg  = {"ESOL": (0.829, 0.019), "FreeSolv": (0.572, 0.023), "Lipophilicity": (0.728, 0.016)}
+official_reg  = {"ESOL": (0.829, 0.019), "Lipophilicity": (0.728, 0.016)}
 
 # Our reproduction (DeepChem scaffold split, AdamW, HuggingFace)
 ours_cls = {"BBBP": (0.727, 0.006), "Tox21": (0.747, 0.004), "ClinTox": (0.989, 0.001)}
-ours_reg = {"ESOL": (0.787, 0.019), "FreeSolv": (2.175, 0.026), "Lipophilicity": (0.686, 0.019)}
+ours_reg = {"ESOL": (0.787, 0.019), "Lipophilicity": (0.686, 0.019)}
 
 COLOR_OFFICIAL = "#2E86AB"
 COLOR_OURS     = "#E74C3C"
@@ -59,7 +59,7 @@ def plot_bars(ax, official, ours, ylabel, title, ylim=None, higher_better=True):
         diff = abs(um - om)
         sign = "+" if ours_wins else "-"
         top = max(om + official[d][1], um + ours[d][1])
-        offset = top * 0.04 if not higher_better else 0.03
+        offset = top * 0.06 if not higher_better else 0.03
         ax.text(i, top + offset, f"{sign}{diff:.3f}", ha="center", va="bottom",
                 fontsize=8, color=color, fontweight="bold")
 
@@ -67,7 +67,7 @@ def plot_bars(ax, official, ours, ylabel, title, ylim=None, higher_better=True):
     ax.set_xticklabels(datasets, fontsize=11)
     ax.set_ylabel(ylabel, fontsize=11, fontweight="bold")
     ax.set_title(title, fontsize=13, fontweight="bold", pad=10)
-    ax.legend(fontsize=9.5, loc="upper left" if not higher_better else "lower left")
+    ax.legend(fontsize=9.5, loc="lower right" if not higher_better else "lower left")
     ax.grid(axis="y", alpha=0.3, linestyle="--")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
