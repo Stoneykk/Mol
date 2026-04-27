@@ -1,3 +1,5 @@
+**简体中文** | [English](README.en.md)
+
 # Mol_Regression
 
 面向 **MoleculeNet** 等基准的分子性质预测研究仓库：从 **D-MPNN（Chemprop 风格图神经网络）** 的独立实现与验证，到 **MoLFormer-c3-1.1B** 预训练模型的微调与官方结果对比，并为后续 **D-MPNN + MoLFormer 多模态融合** 打基础。
