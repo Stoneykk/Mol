@@ -98,12 +98,61 @@ python -m pytest tests/test_model.py -v
 
 ---
 
-## 主要结论（摘要）
+## 现阶段结果与分析
 
-- **D-MPNN**：在 chemprop v2 相同 scaffold 与默认超参下，ESOL / FreeSolv 等数据集上测试 RMSE 与官方差异约 **1% 量级**；实现与官方在核心算法上对齐（见 `stage1.md` 第 7、12 节）。
-- **MoLFormer**：在 6 个 MoleculeNet 子集、相同 DeepChem 划分与 triplicate 设置下，多数数据集上达到或超过 ChemBERTa-3 公开表中的 c3-MoLFormer 水平；FreeSolv 因样本极少对划分与实现细节更敏感，需单独解读（见 `stage2.md` 第 4–5 节）。
+### Stage 1：D-MPNN vs Chemprop v2.2.2
 
-详细表格、图表路径与实现差异说明以 **stage1.md**、**stage2.md** 为准。
+**设定**：`chemprop` conda、Python 3.11.13、PyTorch 2.2.2；**chemprop v2 生成的 scaffold_balanced 划分**；超参与 chemprop v2 默认一致；**50 epochs**、Adam、Noam-like 学习率、**目标按训练集做标准化**；D-MPNN 参数量约 **318K**。
+
+**回归（Test RMSE ↓，越小越好）** — 与 `stage1.md` §7、§11.2 一致：
+
+| 数据集 | 规模 / 划分 | Chemprop v2 | 自研 D-MPNN | 相对差异 |
+|--------|-------------|------------|------------|----------|
+| ESOL | 1,128 · 904/112/112 | 0.8048 | **0.7935** | −1.4% |
+| FreeSolv | 642 · 515/63/64 | 2.5069 | **2.5163** | +0.4% |
+| Lipophilicity | 4,200 · 3360/420/420 | 0.5881 | **0.5890** | +0.2% |
+
+**分类（Test ROC-AUC ↑，越大越好）** — `scaffold` 划分，见 `stage1.md` §11.3：
+
+| 数据集 | 任务数 | 划分 | Chemprop v2 | 自研 D-MPNN | 相对差异 |
+|--------|--------|------|------------|------------|----------|
+| BBBP | 1 | 1633/203/203 | 0.8266 | 0.8121 | −1.8% |
+| Tox21 | 12 | 6259/782/782 | 0.7638 | 0.7532 | −1.4% |
+| ClinTox | 2 | 1184/148/148 | 0.8537 | **0.8797** | +3.0% |
+
+**分析（D-MPNN）**：三条回归线路上 RMSE 与官方差距均在约 **1.5% 以内**；与 chemprop 在**消息传递公式、NormAggregation、特征（72/14 维）**上对齐是结果接近的主要原因。分类三条路与官方 AUC 差距在约 **3% 以内**；ClinTox 上自研略高，属小数据与划分的正常波动。更细的 Tox21 分任务、与官方代码级对比见 `stage1.md` §8、§12。
+
+---
+
+### Stage 2：MoLFormer-c3-1.1B vs ChemBERTa-3 公开表
+
+**设定（与 Stage 1 不同）**：**DeepChem `ScaffoldSplitter` 80/10/10** 预存在 `data/deepchem_split/`；`transformers==4.38.2`；**每个数据集 3 个 random seed 取 mean ± std**；回归 **100 epochs**、分类 **10 epochs**，`batch_size=32`，`lr=3e-5`，**AdamW**（官方表多为 **FusedLAMB**）。官方数值来源见 [ChemBERTa-3 仓库](https://github.com/deepforestsci/chemberta3) 的 DeepChem-splits 图。
+
+**分类（Test ROC-AUC ↑）**：
+
+| 数据集 | 官方 c3-MoLFormer | 本仓库复现 |
+|--------|-------------------|------------|
+| BBBP | 0.735 ± 0.019 | 0.727 ± 0.006 |
+| Tox21 | 0.723 ± 0.012 | **0.747 ± 0.004** |
+| ClinTox | 0.839 ± 0.013 | **0.989 ± 0.001** |
+
+**回归（Test RMSE ↓）**：
+
+| 数据集 | 官方 c3-MoLFormer | 本仓库复现 |
+|--------|-------------------|------------|
+| ESOL | 0.829 ± 0.019 | **0.787 ± 0.019** |
+| FreeSolv | 0.572 ± 0.023 | 2.175 ± 0.026 |
+| Lipophilicity | 0.728 ± 0.016 | **0.686 ± 0.019** |
+
+![MoLFormer 与公开基准对比](assets/stage2_comparison.png)
+
+**分析（MoLFormer）**：
+
+- **5/6 个数据集**上达到或优于公开表中的 c3-MoLFormer；**Tox21、ClinTox、ESOL、Lipophilicity** 明显更优或持平；**BBBP** 与官方在官方标准差范围内接近。
+- **FreeSolv** 明显落后（2.175 vs 0.572）：主因是 **仅 642 个分子、测试集约 65 条**，**scaffold 划分在 DeepChem 版本间细微差别**会放大方差；另 **AdamW vs FusedLAMB、epoch 与调参** 在小数据上更敏感。ClinTox 同为小集却明显优于官方，更支持 **split 与评估难度** 带来差异，而非单指模型失败。
+- **ClinTox 0.989**：除 split 外，**AdamW 的参数分组** 对小多任务分类的稳定性可能也有贡献（详见 `stage2.md` §5）。
+
+完整讨论、训练命令与 `stage2_output/` 见 **`stage2.md`**。
 
 ---
 
@@ -127,4 +176,4 @@ python -m pytest tests/test_model.py -v
 
 ---
 
-*文档由仓库内 `stage1.md`、`stage2.md`、`HANDOVER.md`、`report_v1.md` 综合整理。*
+*项目说明与上表与 `stage1.md`、`stage2.md` 保持一致；其它背景见 `HANDOVER.md`、`report_v1.md`。*

@@ -98,12 +98,57 @@ If `chemprop` is installed, see the `chemprop train` example in `stage1.md`, Sec
 
 ---
 
-## Key results (summary)
+## Current results and analysis
 
-- **D-MPNN:** With the same scaffold and default hyperparameters as chemprop v2, test RMSE on ESOL / FreeSolv and related sets is within about **1%** of the official run; the core algorithm matches the reference (see `stage1.md`, Sections 7 and 12).
-- **MoLFormer:** On six MoleculeNet subsets with the same DeepChem split and triplicate runs, results mostly match or beat the c3-MoLFormer row in the ChemBERTa-3 table; **FreeSolv** is very small and sensitive to split/version details—interpret separately (see `stage2.md`, Sections 4–5).
+### Stage 1: D-MPNN vs chemprop v2.2.2
 
-Full tables, figure paths, and implementation caveats: **stage1.md** and **stage2.md**.
+**Protocol:** `chemprop` env, Python 3.11.13, PyTorch 2.2.2; **scaffold_balanced split from chemprop v2**; default chemprop v2 hyperparameters; **50 epochs**, Adam, Noam-like LR, **target standardization (train mean/std)**; D-MPNN has ~**318K** parameters.
+
+**Regression (test RMSE ↓)** — as in `stage1.md` §7 and §11.2:
+
+| Dataset | Size / split | Chemprop v2 | Our D-MPNN | Δ |
+|---------|--------------|------------|------------|---|
+| ESOL | 1,128 · 904/112/112 | 0.8048 | **0.7935** | −1.4% |
+| FreeSolv | 642 · 515/63/64 | 2.5069 | **2.5163** | +0.4% |
+| Lipophilicity | 4,200 · 3360/420/420 | 0.5881 | **0.5890** | +0.2% |
+
+**Classification (test ROC-AUC ↑)** — `stage1.md` §11.3:
+
+| Dataset | #tasks | Split | Chemprop v2 | Our D-MPNN | Δ |
+|---------|--------|-------|------------|------------|---|
+| BBBP | 1 | 1633/203/203 | 0.8266 | 0.8121 | −1.8% |
+| Tox21 | 12 | 6259/782/782 | 0.7638 | 0.7532 | −1.4% |
+| ClinTox | 2 | 1184/148/148 | 0.8537 | **0.8797** | +3.0% |
+
+**Takeaway (D-MPNN):** RMSE is within about **1.5%** on the three regression sets; AUC is within about **3%** on the three classification sets. This matches full alignment of **message passing, NormAggregation, and 72/14-d features** with chemprop v2. Per-endpoint Tox21 tasks and a code-level comparison to the official stack are in `stage1.md` §8 and §12.
+
+---
+
+### Stage 2: MoLFormer-c3-1.1B vs published ChemBERTa-3
+
+**Note:** This line uses a **DeepChem `ScaffoldSplitter` 80/10/10** (files under `data/deepchem_split/`), not the same file-wise split as Stage 1. **`transformers==4.38.2`**; **3 seeds (mean ± std)**; reg **100** / cls **10** epochs, `batch_size=32`, `lr=3e-5`, **AdamW** (published table often uses **FusedLAMB**). Reference numbers: ChemBERTa-3 DeepChem-splits material.
+
+**Classification (test ROC-AUC ↑):**
+
+| Dataset | Official c3-MoLFormer | This repo |
+|--------|------------------------|-----------|
+| BBBP | 0.735 ± 0.019 | 0.727 ± 0.006 |
+| Tox21 | 0.723 ± 0.012 | **0.747 ± 0.004** |
+| ClinTox | 0.839 ± 0.013 | **0.989 ± 0.001** |
+
+**Regression (test RMSE ↓):**
+
+| Dataset | Official c3-MoLFormer | This repo |
+|--------|------------------------|-----------|
+| ESOL | 0.829 ± 0.019 | **0.787 ± 0.019** |
+| FreeSolv | 0.572 ± 0.023 | 2.175 ± 0.026 |
+| Lipophilicity | 0.728 ± 0.016 | **0.686 ± 0.019** |
+
+![MoLFormer vs published benchmark](assets/stage2_comparison.png)
+
+**Takeaway (MoLFormer):** **5/6** sets match or beat the table; **Tox21, ClinTox, ESOL, Lipophilicity** are clearly at or above reference; **BBBP** is within the published std. **FreeSolv** lags (2.175 vs 0.572): **642 molecules / ~65 test points** make scaffold splits and toolchain versions a large lever; **AdamW vs FusedLAMB** and budget (epochs, tuning) also matter on tiny data. Strong **ClinTox** with weak **FreeSolv** is consistent with **split difficulty** varying across small sets, not a single “model is broken” story. **AdamW param groups** may also help small classification tasks (see `stage2.md` §5).
+
+For full detail, see **`stage2.md`** and `stage2_output/`.
 
 ---
 
@@ -127,4 +172,4 @@ Full tables, figure paths, and implementation caveats: **stage1.md** and **stage
 
 ---
 
-*This file is a companion to the Chinese [README](README.md), synthesized from `stage1.md`, `stage2.md`, `HANDOVER.md`, and `report_v1.md`.*
+*Narrative and tables above follow `stage1.md` and `stage2.md`; see also `HANDOVER.md` and `report_v1.md`. Chinese version: [README](README.md).*
